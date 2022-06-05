@@ -24,7 +24,7 @@ app.get('*', (req, res) => {
 
 // GET route to read db.json file
 app.get('/api/notes', (req, res) => {
-    fs.readFile('/db/db.json', 'utf-8', (err, data) => {
+    fs.readFile('db/db.json', 'utf-8', (err, data) => {
         if (err) throw err;
         const parseData = JSON.parse(data);
         res.json(parseData);
@@ -39,11 +39,11 @@ app.post('/api/notes', (req, res) => {
             text,
             id: uniqid(),
         };
-        fs.readFile('/db/db.json', 'utf-8', (err, data) => {
+        fs.readFile('db/db.json', 'utf-8', (err, data) => {
             if (err) throw err;
             const parseData = JSON.parse(data);
             parseData.push(newNote);
-            fs.writeFile('/db/db.json', JSON.stringify(parseData), (err) => {
+            fs.writeFile('db/db.json', JSON.stringify(parseData), (err) => {
                 if (err) throw err;
                 res.json(parseData);
                 console.log('The note has been saved!');
@@ -55,7 +55,7 @@ app.post('/api/notes', (req, res) => {
 
 // DELETE ROUTE put some this logic in separate function
 app.delete('/api/notes/:id', (req, res) => {
-   const allNotes = JSON.parse(fs.readFileSync('/db/db.json'))
+   const allNotes = JSON.parse(fs.readFileSync('db/db.json'))
    const deleteNote = allNotes.filter(note => {(note.id === req.params.id);
   
    fs.writeFileSync('db/db.json', JSON.stringify(deleteNote), (err) => {
