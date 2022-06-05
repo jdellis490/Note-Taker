@@ -10,21 +10,21 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('Develop/public'));
+app.use(express.static('public'));
 
 // Routes
 
 // Get routes for index.html and note.html files
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/index.html'))
-});
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/notes.html'))
+});
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/index.html'))
 });
 
 // GET route to read db.json file
 app.get('/api/notes', (req, res) => {
-    fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+    fs.readFile('/db/db.json', 'utf-8', (err, data) => {
         if (err) throw err;
         const parseData = JSON.parse(data);
         res.json(parseData);
@@ -37,31 +37,33 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title,
             text,
-            note_id: uniqid(),
+            id: uniqid(),
         };
-        fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+        fs.readFile('/db/db.json', 'utf-8', (err, data) => {
             if (err) throw err;
             const parseData = JSON.parse(data);
             parseData.push(newNote);
-            fs.writeFile('./db/db.json', JSON.stringify(parseData), (err) => {
+            fs.writeFile('/db/db.json', JSON.stringify(parseData), (err) => {
                 if (err) throw err;
                 res.json(parseData);
                 console.log('The note has been saved!');
             });
-            //res.json(parseData);
         });
     }  
 });
 
 
-
 // DELETE ROUTE put some this logic in separate function
-app.delete(`/api/notes/${uniqid}`, (req, res) => {
-   
-})
-//getData - might need to be a promise - fs promises
-
-
+app.delete('/api/notes/:id', (req, res) => {
+   const allNotes = JSON.parse(fs.readFileSync('/db/db.json'))
+   const deleteNote = allNotes.filter(note => {(note.id === req.params.id);
+  
+   fs.writeFileSync('db/db.json', JSON.stringify(deleteNote), (err) => {
+       if (err) throw err;
+       res.json(deleteNote);
+   });
+});
+});
 
 
 app.listen(PORT, () => console.log(`listening on PORT: ${PORT}`));
