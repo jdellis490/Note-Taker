@@ -2,6 +2,7 @@ const { response } = require('express');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const notes = require('./db/db.json');
 const uniqid = require('uniqid');
 
 
@@ -18,7 +19,7 @@ app.use(express.static('public'));
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 });
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/index.html'))
 });
 
@@ -54,16 +55,20 @@ app.post('/api/notes', (req, res) => {
 
 
 // DELETE ROUTE put some this logic in separate function
-app.delete('/api/notes/:id', (req, res) => {
-   const allNotes = JSON.parse(fs.readFileSync('db/db.json'))
-   const deleteNote = allNotes.filter(note => {(note.id === req.params.id);
-  
-   fs.writeFileSync('db/db.json', JSON.stringify(deleteNote), (err) => {
-       if (err) throw err;
-       res.json(deleteNote);
-   });
-});
-});
+// Unable to get this working
+
+// app.delete('/api/notes/:id', (req, res) => {
+//    const noteId = req.params.id;
+//    for (let i = 0; i < notes.length; i++) {
+//        if (noteId === notes[i].req.id){
+//            notes.splice(noteId);
+//        }return res.json(notes[i]);
+//     };
+//    fs.writeFile('db/db.json', JSON.stringify(notes), (err) => {
+//        if (err) throw err;
+//        res.json(notes);
+//    });
+// });
 
 
 app.listen(PORT, () => console.log(`listening on PORT: ${PORT}`));
